@@ -1,0 +1,26 @@
+USE [master]
+GO
+
+/****** Object:  Table [dbo].[demo_event_temp1]    Script Date: 7/20/2017 5:13:52 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+CREATE TABLE [dbo].[demo_event_temp1](
+	[Posttime] [datetime] NULL,
+	[user_name] [sysname] NOT NULL,
+	[event] [varchar](100) NULL,
+	[TSQL] [varchar](4000) NULL
+) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
+GO
+
+

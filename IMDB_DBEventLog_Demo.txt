@@ -1,0 +1,57 @@
+USE [master]
+GO
+
+/****** Object:  DdlTrigger [IMDB_DBEventLog_Demo]    Script Date: 7/20/2017 5:16:06 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+
+
+
+
+create TRIGGER [IMDB_DBEventLog_Demo] 
+ON ALL SERVER 
+FOR drop_database, create_database, create_linked_server, add_server_role_member 
+ 
+AS
+DECLARE @data XML
+ 
+SET @data = EVENTDATA()
+ 
+INSERT master.dbo.demo_event_temp1
+ 
+   (PostTime, user_name, Event, TSQL) 
+ 
+   VALUES 
+ 
+   (GETDATE(), CONVERT(nvarchar(30), SUSER_NAME()),
+ 
+   @data.value('(/EVENT_INSTANCE/EventType)[1]', 'nvarchar(100)'), 
+ 
+   @data.value('(/EVENT_INSTANCE/TSQLCommand)[1]', 'nvarchar(4000)') ) ;
+   Begin
+   declare @TSQL varchar(5000)
+   declare @user varchar(200)
+ --  declare @event varchar(5000)
+   declare @string varchar(5000)
+Set @user=(SELECT TOP 1 user_name FROM master.dbo.demo_event_temp1 ORDER BY Posttime DESC )
+--Set @event=(SELECT TOP 1 event FROM SQL_IMDB.dbo.demo_event_temp1 ORDER BY Posttime DESC )
+Set @TSQL=(SELECT TOP 1 TSQL FROM master.dbo.demo_event_temp1 ORDER BY Posttime DESC )
+set @string=' USER : ' + @user +  ' SQL : ' +  @TSQL + ' '
+exec xp_logevent 70000,@string; 
+return  
+End
+
+
+GO
+
+ENABLE TRIGGER [IMDB_DBEventLog_Demo] ON ALL SERVER
+GO
+
+
